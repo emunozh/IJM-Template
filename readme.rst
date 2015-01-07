@@ -93,12 +93,9 @@ Used packages
 .. _ccaption: http://ctan.org/pkg/ccaption
 .. _faccyhdr: http://ctan.org/pkg/fancyhdr
 .. _geometry: http://ctan.org/pkg/geometry
-
-.. _IJM-article.cls: http://www.linktothis.com
-.. _readme.pdf: http://www.linktothis.com
-.. _FIGURES: http://www.linktothis.com
-.. _IJM-article.tex: http://www.linktothis.com
-.. _International Journal of Microsimulation: http://www.ijm.org
-
+.. _IJM-article.cls: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.cls
+.. _readme.pdf: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.pdf 
+.. _FIGURES: https://github.com/emunozh/IJM-Template/blob/master/FIGURES
+.. _IJM-article.tex: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.tex
+.. _International Journal of Microsimulation: http://www.microsimulation.org/IJM/
 .. _pdflatex: http://www.tug.org/applications/pdftex/
-
