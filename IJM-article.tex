@@ -1,0 +1,1246 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+\documentclass[11pt]{IJM-article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} % set input encoding
+\usepackage[english]{babel}
+\fontfamily{garamond}
+
+% Math support
+\usepackage{mathtools}
+\usepackage{mathptmx}
+\usepackage{xspace}
+
+%% Load article specific packages
+\usepackage{import}
+% For nice graphs and tables
+\usepackage{epstopdf}
+\usepackage{transparent}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{color}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+%%                                             %%
+%%  All figure files must be submitted as      %%
+%%  separate graphics                          %%
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%     
+
+% Begin ...
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the title of your article here     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{
+Constructing an Urban Microsimulation Model to Assess the Influence of
+Demographics on Heat Consumption}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors here                   %%
+%%                                          %%
+%% For each author define:                  %% 
+%%  (1)    \author[lastname]{fillname}      %%
+%%  (2)    \affiliation{institution name\\  %%
+%%                      place}              %%
+%%  (4)    \email{email@domain.com}         %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Author 1
+\author[Munoz]{M. Esteban Munoz H.}
+\address{Technical Urban Infrastructure Systems Group, HafenCity University\\
+         Hamburg, Germany}
+\email{marcelo.hidalgo@hcu-hamburg.de}
+
+%% Author 2
+\author[Peters]{Irene Peters}
+\address{Technical Urban Infrastructure Systems Group, HafenCity University\\
+         Hamburg, Germany}
+\email{irene.peters@hcu-hamburg.de}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the paper keywords here            %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\keywords{
+    Heat consumption,
+    digital cadaster,
+    building stock,
+    spatial microsimulation,
+    combinatorial optimization}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the JEL classification here        %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\JELclassification{J11, C15, C63}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Issue number as (y) m(n) p0-p1           %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\issue{2014}{7}{1}{127}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Maketitle
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Abstract begins here                 %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstract}
+We present ongoing work on the construction of a spatial microsimulation model
+to assess the influence of demographics on residential heat consumption for
+Hamburg, Germany.  Demographics are important for urban energy planning as: (1)
+Buildings are becoming more energy-efficient and building occupant behaviour
+accounts for a growing share in the variation of consumption; (2) building
+occupant needs are changing along with demographic change; and (3) the share of
+small decentralized district heating grids, in which fewer customers mean less
+averaging out of heterogeneous occupant profiles, is set to play a bigger role
+in the country's heat supply. We construct a spatial microdata set for the city
+of Hamburg (of roughly 1.8 million inhabitants and 370 000 buildings), with
+households populating geo-referenced buildings, in three steps: (a)
+Synthesizing the population of small scale ``statistical areas'', comprising up
+to around 2 000 people (we do this by selecting households recorded in the
+German microcensus and fitting them into the statistical areas); (b) assigning
+energy relevant properties to the geo-referenced buildings from the Hamburg
+digital cadaster (we do this by making use of a well-established building
+typology developed for energy assessment) and constructing dwelling units in
+these buildings; and (c) matching households to the dwelling units in these
+buildings (which we do again by using household data from the microcensus).
+This last step – allocating households to buildings – may be the most
+interesting and challenging task. As of to date, we use a combinatorial
+optimization algorithm to achieve this. Once we have a microsimulation model of
+buildings and households living in them, including their demographic
+composition, the range of questions that can be explored is immense. The
+illustration presented here is a simple heat balance computation of individual
+buildings, using the constructed socio-demographic data and the digital
+cadaster data as input parameters.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                               %%
+%% The Main Body begins here                                     %%
+%%                                                               %%
+%% use \cite{...} to cite references                             %%
+%%  \cite{koon} and                                              %%
+%%  \cite{oreg,khar,zvai,xjon,schn,pond}                         %%
+%%                                                               %%
+%% See readme.rst for further instructions of citation style     %%
+%%                                                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The application and the need for new modeling approaches}
+\label{sec:1}
+
+The immediate purpose of the microsimulation model presented here is to
+simulate the presence of occupants in buildings and the resulting building heat
+consumption. The impact of occupants and their behaviour on building heat
+consumption is increasingly drawing interest from the urban energy planning
+community. In the past, the influence of occupants on building heat consumption
+was considered negligible. Building heat consumption was dominated by the
+nature of the building shell and the heat transmission losses it allowed. The
+last couple of decades, however, has seen a tightening of energy efficiency
+standards in building construction, greatly reducing transmission losses
+through the shell, thus increasing the impact that occupant behavior has on
+heat consumption. This also applies to the building stock in the course of
+retrofitting.\\
+
+Germany has implemented stringent energy efficiency requirements for new
+construction, pushed by European Union requirements, the European Parliament
+and the Council of \citeA{epbd.2002, epbd.2010}.  More ambitious efficiency
+requirements are on the horizon.  The building stock, too, has shifted into the
+policy focus of the German energy transition, as German buildings are largely
+already built, and the rate of new construction is only about one percent of
+the total building stock \citeA{Kleemann.2005}.  This means that the challenge
+lies in reducing energy use and $CO_{2}$ emissions of existing buildings.  This
+is done with: (1) energyefficiency retrofitting of the building shell (reducing
+heat transmission losses through heat insulation); (2) increasing the
+efficiency in the heat supply, and (3) replacing fossil fuels with renewable
+energy sources or heat from co- generation.\\
+
+There is a trend towards small, decentralized heating systems fed by
+co-generation and renewables \citeA{Kleemann.2005, KEMA.2012}. These are
+formed through dividing large centralized district heating networks into
+smaller islands (Germany has some amount of district heating, especially in the
+large cities) and through the construction of new small heat networks that are
+fed by biomass or co-generation heat \citeA{Jentsch.2008}.\\
+
+The trend towards more efficient buildings (in terms of reduced heat losses
+through the building shell) on the one hand and more decentralized heating
+networks on the other imply that it becomes more important to understand the
+influence of building occupant demographics and behaviour on heat
+consumption: In inefficient homes, the level of heat consumption is determined
+mainly by the properties of the building shell -- because so much heat leaves a
+heated house as transmission losses through the shell. Little does it matter
+what people do in such a home. In well-insulated homes, this is no longer so
+(see Figure~\ref{fig:3}).  The behaviour of the building occupants -- the
+temperature at which they feel comfortable \citeA{Liao.2002, Peffer.2011}, the
+amount of time and time of day they spend at home \citeA{Robinson.2011,
+Wilke.2011}, their warm water usage patterns \citeA{GuerraSantin.2009} -- has a
+much greater influence on heat consumption.  Together with the trend towards
+smaller heating grids, this occupant influence becomes more important to
+understand; as such heating grids have to take into account peak and minimum
+loads. Fewer customers on a grid mean less averaging out of heterogeneous
+consumption patterns.\\
+
+In German heat supply planning, and in the legal provisions for building energy
+efficiency, the heating requirements of buildings are typically computed by a
+standardised procedure that employs a static energy balance model. It uses
+specific building characteristics (in essence): the geometry and the materials
+of the building shell, combined with some normal parameters about the occupants
+and the indoor climate associated with the occupants (normal temperature, air
+exchange rate, and so on), to arrive at building heat demand. This heat demand
+is a hypothetical figure, not indicating any spread of the buildings' heat
+energy use. Heat consumption, by contrast, denotes the heat that a building
+actually consumes. The term is used for measured consumption values in the
+past, or for anticipated (predicted, simulated, estimated) heat uses taking
+into account the occupant and other abnormal conditions (in contrast to the
+hypothetical ``planned'' figure that is based on a normal occupant and normal
+conditions). (See also sectioni~\ref{sec:4})\\
+
+The use of a ``normal'' or ``average'' occupant works fine in current heating
+grids because: (a) in large, centralized systems, social differences cancel
+each other out; (b) the transmission losses in the building stock are much
+higher than the losses caused by human behaviour, making them negligible; (c)
+supply urban areas have homogeneous social diversity, making the ``average''
+occupant similar for all supply areas. As argued above, the energy supply of
+the future is likely to be far more decentralized \citeA{KEMA.2012} and
+energy-efficient.  We also know that at a low aggregation level there are
+substantial differences in the social characteristics within urban areas;
+probably the best know example is the student neighborhood found in many city
+centers of the world.\\
+
+On big centralized heat supply systems which supply a large group of
+individuals the estimated heat demand curve lies close to the real consumption
+curve as the ``average occupant'' is a representative occupant of the group. In
+such a big group large deviations from the ``average'' occupant will cancel
+each other out, meaning an averaging out of the temporal distribution of
+consumption patterns rather than the absolute consumption intensities.\\
+
+The task at hand then is to understand the influence of occupant
+characteristics on the variability of heat consumption. There are different
+methods by which this task can be and has been approached, developed for
+different purposes and by different academic disciplines.
+
+\section{Overview of modelling steps, and modeling approach}
+\label{sec:2}
+
+In order to provide the reader with some guidance to the remainder of the
+document, we offer an overview of the modelling steps and depict the model
+structure and data sources in Figure~\ref{fig:1}.  We also comment briefly on
+our modelling philosophy. In constructing our simple model, we perform the
+following steps:\\
+
+\textbf{Step 1.} We synthesize the population of ``statistical areas'' in
+Hamburg by selecting households from the German Microcensus, fitting them into
+statistical areas and trying to achieve a good fit of the populations thus
+synthesized with the aggregate populations recorded for these areas, using a
+hill climbing algorithm \cite{Williamson.1998}. ``Statistical areas'' for
+Hamburg are areas of up to around 2000 people (in some cases far less) for
+which fairly detailed sociodemographic data is available (e.g.\ number of
+inhabitants per age class). For now we use the Microcensus of 2002; in a later
+step we plan to use the 2010 data-set. The 2002 Microcensus of Germany contains
+over 25000 records of individuals in their household contexts and lists around
+340 variables, including demographic household composition, employment status,
+and type of building the household is living in. Step~1 is described in
+Section~\ref{sec:5} of this paper.\\
+
+\textbf{Step 2.} We equip buildings that are geo-referenced in the official
+digital Hamburg cadaster with energy-relevant properties. We do this by using
+the IWU building typology (IWU is the Institute for Housing and Environment in
+Darmstadt), the leading German building typology developed and continually
+updated for the purpose of energy assessment of buildings \citeA{Loga.2012}. We
+assign buildings in the digital Hamburg cadaster to types in this typology,
+using an automated method containing stochastic elements, described in
+\citeA{Munoz.2013b}. This is the subject of Section~\ref{sec:6} in this
+paper.\\
+
+\textbf{Step 3.} For the statistical areas, we obtain the number of dwelling
+units per multi-family building as follows: We add the number of single-family
+residences (indicated in the cadaster) and an imputed number of dwelling units
+in multi-family houses, where we impute the latter by dividing the entire floor
+space of multifamily-buildings (available from the cadaster) through the number
+of households minus the number of single family residences. This step is
+described in Section~\ref{sec:6} of this paper.\\
+
+\textbf{Step 4.} For the statistical areas, we assign households (from Step~1)
+to dwelling units (from Step~3) by using variables from the Microcensus
+pertaining to the type of building that the households taken from the
+Microcensus live in. Step~4 is described in Section~\ref{sec:7} of this
+paper.\\
+
+\textbf{Step 5.} We simulate heat consumption of buildings by using a static
+heat balance computation tool and varying the parameters pertaining to the
+occupants (e.g.\ air exchange, indoor temperature etc.). Usually, in these
+static tools (as they are used and normal in German legislation for building
+energy efficiency) the computation is carried out for a normal occupant with
+normal behaviour, and only the physical building characteristics vary according
+to the building being assessed. This is to ensure equal assumptions for all
+building computations. We vary these ``occupant variables'' based on data from
+the Microcensus pertaining to work hours which are computed based on employment
+status, job type, etc. Step~5 is described in Section~\ref{sec:8} of this
+paper.\\
+
+\begin{figure}[htb] 
+    \centering
+    \caption{Model data structure and simulation steps.}
+	\def\svgwidth{0.77\linewidth}
+    \import{FIGURES/}{Model.pdf_tex} 
+    \label{fig:1}\\
+    \begin{flushleft}
+    \begin{footnotesize}
+    The diagram shows the three main databases (a-c) and the additional
+building typology used for the classification of the building stock (d). In
+step 4 the synthetic families (e) are merged with the constructed dwelling
+units (f). The simulation of heat consumption is performed in step number 5.
+    \end{footnotesize}
+    \end{flushleft}
+\end{figure}
+
+The model architecture is object-oriented (implemented in Python), representing
+each individual unit as an object of a ``class''. Many authors developing
+microsimulation models argue in favor of a truly object-oriented model
+\citeA{Ballas.1999, Miller.2004, Rahman.2010}. Having an object-oriented
+architecture provides the ideal platform for developing an agent-based model, a
+model type capable of generating emergent phenomena arising out of the
+interaction of individuals \citeA{Birkin.2012}. There are not only advantages
+for the simulation itself, but also for the code, as it becomes more
+``realistic'' and hence less error-prone and easier to share. We see the
+combination of this (and similar approaches e.g. Cellular Automata) as the most
+effective method and we therefore prepared our model for our future work as a
+hybrid agent-based spatial microsimulation model (as did \citeA{Peters.2002}
+for a waste water application).
+
+\section{The digital cadaster and the microcensus}
+\label{sec:3}
+
+In this section we present the main data sources used for our model so far. The
+different data sources displayed in Figure~\ref{fig:1} are: (a) The German
+Microcensus from 2002; (b) cross tabulation data aggregated to statistical
+areas for the city of Hamburg; (c) the digital cadaster of the city of Hamburg
+and d) a building typology developed by the IWU institute for the
+classification of the German building stock.\\
+
+\begin{enumerate}\itemsep4ex
+    \item[a.] The census data comes from the official German Microcensus for
+        scientific research Amtliche Mikrodaten für die wissenschaftliche
+        Forschung \citeA{NRW.2002}, developed and maintained by the German
+        Statistical Office of the German Federal Level and the Federal States,
+        Research Data Center Statistische Ämter des Bundes und der Landers,
+        Forschungsdatenzentren.  The data set from 2002 contains 25,137 records
+        of individuals in their household contexts and lists around 340
+        variables for each of these individuals, including the demographic
+        household composition in which they live, their employment status, and
+        type of building the household is living in.
+    \item[b.] The cross tabulations of statistical areas. Statistical areas (in
+        German: ``Statistische Gebiete'') are areas of up to around 2,000
+        inhabitants for which fairly detailed data on sociodemography are
+        available. This data is developed and maintained by the Statistical
+        Office of the combined Federal States of Hamburg and
+        Schleswig-Holstein. Statistisches Amt für Hamburg und Schleswig-
+        Holstein (StaNord)\footnote{\url{http://www.hmdk.de/portal/_ns:YTU4fGMwfGQwfGVwbHVnaWQ9MT0vaW5ncmlkLWdyb3VwOmRzYy1zY3JpcHRlZC1pbnRlcm5ldHxlZG9jdXVpZD0xPURCOTNCMjNCLUQzRjEtNDQ2MC04QzYyLUREMTk2MTg5Mzc2Nw__/search-detail.psml.}} 
+        See Figure~\ref{fig:2a}a for the partitioning of Hamburg in statistical
+        areas.
+    \item[c.] The digital cadaster of Hamburg, the ALKIS
+        \footnote{ALKIS \cite{ALKIS}
+        \url{www.hmdk.de/trefferanzeige?docuuid=AB8C6B21-BAFF-4230-A686-0C918FEBEE2F}}
+        contains a lot of information on the building stock of the city.  Each
+        building is geo-referenced and contains a set of attributes.  From
+        these attributes we use both the geo-reference (to estimate living
+        space and building orientation) and the attributes to estimate energy
+        relevant properties of the individual buildings, through the use of a
+        building typology (see d below). See Figure~\ref{fig:2b}b for the
+        buildings recorded in the digital cadaster of Hamburg.
+    \item[d.] We make use of the building typology developed by
+        \citeA{Loga.2012} for the German building stock. This typology is well
+        documented and allows the extraction of relevant data. We classify the
+        entire building stock of the digital cadaster into building types of
+        this typology, thereby assigning (1) U-values for the building
+        components (roof, walls and windows) and (2) glazing area, for the
+        estimation of heat loses and solar gains.
+\end{enumerate}\pb
+
+\begin{figure}[htb]
+    \caption{Spatial data used in our model.}
+    \label{fig:2}
+    \centering
+    \vspace{2ex}
+    \begin{tabular}{p{.5\textwidth}p{.5\textwidth}}
+        (a) Statistical areas \label{fig:2a} & 
+        (b) Digital cadastre ALKIS \label{fig:2b}\\
+    \end{tabular}
+    \includegraphics[width=\textwidth]{FIGURES/Data.jpg}
+    \begin{flushleft}
+    \begin{footnotesize}
+(a) Statistical areas ``Statistische Gebiete'' containing aggregated
+sociodemographic information. Statistisches Amt für Hamburg und
+Schleswig-Holstein (StaNord); and (b) Digital cadaster ALKIS ``Amtliches
+Liegenschaftskatasterinformationssystem''. \citeA{ALKIS}
+    \end{footnotesize}
+    \end{flushleft}
+\end{figure}
+
+\section{Computing heat demand vs. simulating heat consumption: state of the
+art in urban heat modelling, and our contribution }
+\label{sec:4}
+
+Assessing the heat use of buildings can essentially be achieved by two methods,
+which exist in different variations. Simply speaking, heat demand is computed
+by constructing a static heat flow balance (or heat accounting balance). German
+regulations for building energy efficiency employ this approach and define a
+legally binding procedure, along with parameter values on the occupant, to
+implement the regulation. See DIN V 18599  \citeA{DIN.2011}.  By contrast,
+there is also dynamic thermal simulation, taking account of spatial-temporal
+heat flows in the building and detailed circumstances, including occupant
+characteristics. The latter is the most common method used in the building
+simulation community \citeA{Hensen.2011} which is dominated by physicists and
+engineers.\\
+
+Thus, \textit{demand} usually means a hypothetical figure computed in a static
+energy balance from energy-relevant properties of the building, assuming a
+normal occupant. \textit{Consumption}, on the other hand, is what a building
+actually consumes -- a real or a simulated figure that reflects real world
+deviations from the norm, caused by, for example, occupant attributes and
+behaviour that deviates from the norm. One could distinguish a third specimen
+of model used by economists and social scientists, a statistical approach,
+relating energy consumption to building occupants (or building characteristics)
+based on observed consumption data, without explicitly accounting for heat
+flows.\\
+
+Our ultimate objective is to simulate heat consumption. For this model,
+therefore, we take a simple approach, using a static heat accounting tool which
+traditionally is used to assess heat demand, in which we vary the assumptions
+based on the occupants of the building, such as interior heat gains, air flow,
+and desired indoor temperature.\\
+
+Other attempts to perform a simulation of energy consumption at an urban scale
+using micro units have been performed by \citeA{Haldi.2011, Chingcuanco.2012,
+Jackson.2008}.  \citeauthor{Haldi.2011} develop their own urban energy demand
+model (CitySim), which implements a simple thermal simulation, accounting for
+varying occupants (for more detail see \citeA{Robinson.2011, Page.2008,
+Page.2007}), describing the occupants' presence model which is central to our
+own approach. The model can be extended to simulate entire urban areas.  The
+authors make use of a Markov-Chain model for generating occupancy rates, thus
+representing a possible spread of heat demand patterns at an urban scale.  It
+is our aim to expand these approaches, applying the concept of spatial
+microsimulation to connect demographic characteristics of an urban area,
+allowing us to observe specific spread patterns of heat demand of the
+corresponding urban areas. \citeauthor{Chingcuanco.2012} attempt to combine a
+simulation model (ILUTE)\footnote{Integrated Land Use, Transportation,
+Environment modelling system.} working at a micro level with an energy balance
+model developed specifically for the region under analysis. The first
+simulation model delivers much of the required data for the heat accounting
+model.\\
+
+\begin{figure}[htb]
+    \caption{Occupant influence on different building typologies arrange by
+    	construction year} 
+    \label{fig:3} 
+    \includegraphics[width=\linewidth]{FIGURES/Typ_different_dim_percentage_line.eps}
+\end{figure}
+
+The study of the influence of occupant characteristics and occupant behaviour
+on energy demand has a long tradition in economics \citeA{Scott.1980,
+vanRaaij.1982, vanRaaij.1983b, Bohi.1984}. A general problem of these
+studies is the level of aggregation in the data which records energy
+consumption across a group of consumers with different characteristics, often
+not in panel-data format, and often fails to control for the quality of the
+building (because that data has not been available).\\
+
+The integration of the occupant influence on various types of dynamic thermal
+building simulation models has also been studied by others. Almost all the
+scientific work in this field has been performed at a building level. The area
+of building simulation addresses this topic in a marginal fashion
+\citeA{Mahdavi.2011}. It is essential for the further development of heat
+supply infrastructure in urban environments that a clear understanding of heat
+consumption patterns at a low level of aggregation is achieved.\\
+
+A clear difficulty with empirical observations of occupant behaviour
+influencing energy demand is the need to control for all relevant factors
+\citeA{Yu.2011}. An important factor for the simulation of energy demand seems
+to be occupant presence \citeA{GuerraSantin.2009}, the latter authors observing
+this effect in their work, \citeA{Page.2008} developed an interesting method
+for the integration of this parameter into simulation models.  The authors
+simulate a time series of occupantsr' presence using a stochastic model.
+\citeA{Widen.2011} make an interesting contribution on the use of time-use data
+for the modeling of occupant influence in the residential sector. Further
+methods to integrate occupant behaviour into energy simulation models have been
+developed \citeA{Borgeson.2008, Hoes.2009, Hensen.2011, Ludemann.2001,
+Nouidui.2012} Table~\ref{tab:1} is a rough cut at the literature, classifying
+modelling approaches reported there and illustrating where our approach is
+placed.\\
+
+Returning to our approach which uses a static balancing tool to compute heat
+demand, but varying parameters that may be influenced by the occupants:
+Figure~\ref{fig:3} shows occupant influence on 36 buildings.  We calculated the
+heat demand for each of these buildings varying ``occupant parameters''. The
+variation representing occupant behaviour is performed by the combination of
+three key input variables: (1) $q_i[W/m^2] = $ Internal heat emissions; (2)
+$T_i[C^\circ] = $ Internal temperature; and (3) $n[h^{-1}] = $ Air exchange
+rate. In the plot the buildings are arranged by construction period (from
+oldest to newest). We vary the quality of the building shell along with the
+construction period. Newer buildings have a better insulated shell. It is clear
+that the influence of occupant behaviour (measured as relative heat variation
+$\Delta Qh$ in percent) is highest on newer buildings.\\
+
+This literature shows that the integration of occupant behaviour into building
+simulation models can be achieved. Difficulties arise with the validation of
+such simulations, as empirical data at the needed temporal and disaggregation
+resolution is still very hard to get.\\
+
+\begin{table}[htb] 
+    \caption{Different types of models for energy simulation of buildings} 
+    \label{tab:1} 
+    \centering
+    \begin{tabular}{p{4.5cm}|*{3}{p{3.2cm}}}
+        \toprule 
+        \multicolumn{1}{r|}{Model type} & 
+        static heat balance model (at individual building level)& 
+        dynamic thermal simulation model (at individual building level)& 
+        statistical model relating heat consumption to occupants, at
+        various levels of aggregation, no heat balance imposed\\ 
+        Occupant Type \\
+        \midrule
+        ``Average Occupant'' (household comprised of identical norm persons; only
+        their number counts)& 
+        \cite{Blesl.2007, DIN.2011, 
+        Dascalaki.2011, Loga.2011}&
+        \cite{EnergyPlusDevelopmentTeam.2012, Hensen.2011} \\ 
+        \midrule
+        Household with individualized demographics and behaviour&
+        \cite{Chingcuanco.2012, Munoz.2013b} &
+        \cite{Ludemann.2001, Borgeson.2008, Page.2008,
+        Mahdavi.2011, Widen.2011} & \cite{Scott.1980, Bohi.1984,
+        GuerraSantin.2009} \\ 
+        \bottomrule
+    \end{tabular} 
+\end{table}
+
+\section{constructing synthetic populations for statistical areas}
+\label{sec:5}
+
+The selected households for the specific ``statistical areas'' come from the
+official German Microcensus (see Section~\ref{sec:3}).\\
+
+We select entire households from the Microcensus data base set and fit them
+(with an algorithm described below) into a statistical area such that the
+aggregated sociodemographic data of this area are matched. We are interested in
+households rather than individuals, as in the next step we will allocate these
+households into dwelling units.\\
+
+Table~\ref{tab:2} shows the six variables that we use to fit the households
+into the statistical areas. Of these six variables, two are taken directly from
+the Microcensus, and four we computed based upon other variables of the census.
+We use a combinatorial optimization, Hill Climbing (HC), algorithm to fit
+households from the micro census into statistical areas, following the method
+presented by \citeA{Williamson.1998, Harland.2012} The TAE is calculated, for
+each statistical area, by forming a weighted sum of the absolute errors of the
+household variables of Table~\ref{tab:2}. See Equation~\ref{eq:1} for the
+computation of the TAE and Equation~\ref{eq:2} for the computation of the
+weights. Referring to Table~\ref{tab:2}, the variable ef455 has nine possible
+values (corresponding to 9 construction periods), and Variable ef451 has four
+possible values (corresponding to 4 classes of numbers of dwelling units in the
+building the individual lives in).\\
+
+\begin{table}[htb]
+    \centering
+    \caption{Variables used to fit households from the Microcensus into
+    statistical areas }
+    \label{tab:2}
+    \begin{tabular}{l l}
+        \addlinespace \toprule
+        \multicolumn{2}{l}{\textbf{Constructed variables} }\\ 
+        \textbf{Variable ID} & \textbf{Variable Name} \\ 
+        / & Average household size (No. of individuals per dwelling unit)\\ 
+        / & Number of single households\\ 
+        / & Number of households with children\\ 
+        / & Number of single parent households\\ 
+        \midrule \addlinespace
+        \multicolumn{2}{l}{\textbf{Variables directly taken from the micro-census} }\\
+        %\textbf{Variable ID} & \textbf{Variable Name} \\ 
+        \textbf{ef455} & In what year was your home built?\\ 
+        \textbf{ef451} & How many dwelling units has the building in which you 
+            are living?\\ 
+        \bottomrule 
+    \end{tabular} \\
+    %\begin{flushright} 
+        \begin{footnotesize} 
+            Source: MIKROZENSUS~2002~\cite{StatistischesBundesamt.2002}. 
+            Variable names: translation by the authors.\\ 
+        \end{footnotesize} 
+    %\end{flushright} 
+\end{table}
+
+The errors for all variables (except ``average household size'') are computed
+based on the number of families in the specific value class of that variable.
+This would not make sense for the variable ``average household size``. The
+error for the latter is computed differently, based on the total number of
+families in the specific area.\\
+
+\parbox{\textwidth}{
+    \begin{equation} 
+        \label{eq:1} 
+        TAE_i = \sum_{k} |T_i^{k} - T_i^{k}(obs)| * W^k 
+    \end{equation} 
+    
+    \begin{equation} 
+        \label{eq:2} 
+        W^k = \begin{cases} 
+            NI_{i} \div HHs_{i}(Obs) \div 2 & \text{if $k$ = average size of
+                household} \\ 
+            1 & \text{else} 
+        \end{cases} 
+    \end{equation} 
+
+    \noindent Where:\\
+    \begin{tabular}{lp{15cm}} 
+        $TAE_i$ & Total Absolute Error of statistical area $i$ \\ 
+        $T_i^{k}$ & Estimated variable $k$ for statistical area $i$, 
+            where $k = 1, \dots , 6$ \\ 
+        $T_i^{k}(obs)$ & Observed variable $k$ for statistical area $i$ \\ 
+        $W_i^k$ & Weight factor of variable $k$ for statistical area $i$\\
+        $NI_{i}$ & Observed number of individuals for statistical area $i$ \\
+        $HHs_{i}(Obs)$ & Observed average household size for statistical 
+            area $i$ \\
+    \end{tabular} 
+}\\
+\pb
+
+The variable ``average household size'' receives a smaller weight than the other
+variables because otherwise it would exert an inappropriate influence on the
+fitting process. The division by 2 is an ad hoc choice that seems to smoothe
+the computation process well.\\
+
+\begin{figure}[htb]
+    \caption{
+        Performance of the algorithm used for selecting households to fit
+    aggregate values of statistical area 16004} 
+    \label{fig:4}
+    \centering 
+    \input{FIGURES/PerformanceIdle.tex}
+    %\vspace{-0.5cm} 
+\end{figure}
+
+In each simulation step, we randomly exchange one household fitted into the
+statistical area from a previous random step. If this lowers the TAE, we leave
+the household in the statistical area; otherwise this exchange is rejected and
+the simulation continues with another exchange of households. A clear
+disadvantage of this algorithm is the required computational time.
+Figure~\ref{fig:4} shows the reduction of TAE over time. We can clearly see
+that the simulation does not achieve an idle state even after $10e+6$
+iterations steps and more than 3 days of computational time. There are many
+options to reduce computational time, including the addition of restrictive
+parameters for the fitting of households in the statistical areas, or the use
+of a different algorithm to fit the families into the statistical areas.\\
+
+\section{Assigning heat-relevant properties to geo-referenced buildings}
+\label{sec:6}
+
+For a heat accounting model of individual buildings, certain building data has
+to be available, foremost building geometry and quality of the building shell.
+Although the digital cadaster of Hamburg (see Section~\ref{sec:3}), contains
+many useful data, it is lacking some heat-relevant data – most importantly,
+U-values (that is: heat transmission coefficients) of the building shell
+elements.\\
+
+The use of building typologies to fill this information gap is an interesting
+option. National building typologies are constructed with the aim of developing
+bottom-up models for the evaluation of retrofitting options for the national
+building stock \cite{TABULAProjectTeam.2012b}, thus promoting energy-efficiency
+measures in the building stock at a national level \citeA{Kragh.2013,
+Singh.2013, Dascalaki.2011} In this paper we make use of the IWU building
+typology developed by \citeA{Loga.2012} for the German building stock (see
+Section~\ref{sec:3}). We classify the residential buildings recorded in the
+digital Hamburg cadaster into the types of this specific typology.\\
+
+The main difference between an analysis of the national building stock, for
+which the building typologies are developed, and a computation of heat
+consumption of small areas for the planning of decentralized energy supply
+systems, which is the scope of our research, pertains to scale.  While the
+former focuses on the aggregate effect of energy-efficiency measures in the
+building stock, abstracted from its location in space, the planning of
+decentralized energy supply needs to:\\
+
+(1) allocate the heat demand on small urban areas, suitable for small
+decentralized energy supply systems; and\\
+
+(2) identify areas with a high heat demand density in urban areas in order to
+allow the prioritizing of retrofits. For the proper dimension of heat supply
+systems the estimation of heat demand is a key issue, especially at a low
+aggregation level. The results of using building typologies for the simulation
+of heat demand improves as the number of buildings are summed together
+\citeA{Blesl.2007}.  This is because many key variables like internal heat
+gains, internal temperature, ventilation rates, thermal bridges, etc., cannot
+be identified for every single building.  In order to perform the heat demand
+computation, authors have to use average values defined in national guidelines.
+For the construction of the typology, authors classify the buildings by a
+number of variables, such as construction period and construction type (single
+family house, terrace house, etc.) \citeA{Kragh.2013, Singh.2013,
+Hrabovszk.2013, Caputo.2013}.\\
+
+The data from the digital Hamburg cadaster that we are using is a snapshot of
+the year 2010.  With the available information of the digital cadaster we
+classify the buildings into types of the IWU building typology (see below).
+From this typology we extract specific data of the building that is not
+available in the digital cadaster. From the digital cadaster we extract the
+following variables:\\
+
+\begin{enumerate}
+    \item Building use (i.e., residential and various types of commercial);
+    \item Land use;
+    \item Construction type (i.e., single family house, small multifamily
+        house, row house, etc.);
+    \item Construction year;
+    \item Building footprint area;
+    \item Number of floors; and
+    \item Roof type
+\end{enumerate}\pb
+
+(1 and 2) - The first two variables, building use and land use, are important
+in order to filter nonresidential buildings from the database.\\
+
+(3) - Construction type, is used to filter constructions that have a
+residential use but are not necessarily heated, at least not with the same
+intensity as normal living space. So, for example we filter all the garage
+floor area from our analysis with this variable.\\
+
+(4) - Construction year, is the most commonly used, especially for the German
+building stock.  This is because in Germany the quality of the building shell
+has been regulated since the first ``Wärmeschutzverordnung'' (WSVO) Heat
+conservation ordinance in 1977. Since its first introduction, the German
+government has systematically introduced new regulations over the past decades.
+This has resulted in substantial differences in the quality of the building
+shell over the years. This variable is also used for the allocation of families
+into the constructed dwelling units of the building (see
+Section~\ref{sec:7}).\\
+
+(5 and 6) - The floor space plays a key role in the calculation of heat demand,
+as the floor space can be regarded as heated space. From the digital cadaster
+we cannot directly recover the floor space. We estimate floor space the same
+way for all the buildings in the digital cadaster, as follows:\\
+
+\begin{equation} 
+    \label{eq:3} 
+    sqm_i = groundarea_i \times stories_i \times \kappa 
+\end{equation}\pb
+
+where; $sqm_i$ is the living space in $m^2$ of building $i$; $groundarea_i$ is
+the polygon area of building $i$ in the digital cadaster or building footprint;
+$stories$ is the number of stories of building $i$; and $\kappa$ is a constant
+0.6, differentiating construction space (exterior end internal walls) from
+living space or floor space. The number of floors and the roof type are
+directly retrieved from the digital cadaster. Both parameters are used to
+define the building geometry. \\
+
+(7) - Some of the attributes available in the digital cadaster are not
+available for the entire building stock in the AKIS database, for example, the
+construction year. This poses a particular challenge, as the construction
+period is one of the key variables to classify a building. To address this, we
+have developed an algorithm that filters buildings based on their attributes
+(including the attributes described above as well as roof type) and calculate
+the most probable building type that a building belongs to. In extreme cases
+where just few attributes of the building are available, a type is attributed
+to the building at random. This process is described in \citeA{Munoz.2013b}.\\
+
+\begin{figure}[htb]
+    \centering 
+    \caption{Geometrical simplification of selected buildings.} 
+    \label{fig:5} 
+    \vspace{1em}
+    \begin{tabular}{p{.47\textwidth} p{.47\textwidth}} 
+        \def\svgwidth{\linewidth}
+        \import{FIGURES/}{Simplepolygons.pdf_tex}& 
+        \def\svgwidth{\linewidth}
+        \import{FIGURES/}{SimpleBBoxBuffer.pdf_tex} 
+    \end{tabular} 
+    \begin{flushleft}
+    \begin{footnotesize}
+    (left) original geometry; and (right) simplified geometry used as input for
+    the estimation of heat demand
+    \end{footnotesize}
+    \end{flushleft}
+\end{figure}
+
+\section{Allocating households to dwelling units in the building stock}
+\label{sec:7}
+
+For each statistical area we have:\\
+\begin{description}
+    \item[a] a set of buildings from the digital Hamburg cadaster; and
+    \item[b] a set of households fitted to this statistical area.
+\end{description}\pb
+
+Now we have to allocate the households into the buildings. We do this via
+dwelling units, that is, populating dwelling units (located in buildings) with
+our households. The ALKIS does not give us dwelling units, but we know the
+total number of dwelling units from the demographic data at statistical area
+level, and so we estimate dwelling units per building, as follows:\\
+
+\parbox{\textwidth}{ 
+    \begin{equation} 
+    \label{eq:4} 
+        S_{i} = \frac{\sum_{j}Bsqm_{i,j,multi}}{H_{i} - B_{i,single}} 
+            \times q_{i}
+    \end{equation} 
+    \noindent Where:\\ 
+    \vspace{.5cm}
+    \begin{tabular}{l l} 
+        $S_{i}$ & Average Dwelling unit size of multi family buildings in 
+            statistical area $i$\\ 
+        $Bsqm_{i,j,multi}$ & Floor space of multi family building ${j}$ in 
+            statistical area $i$\\ 
+        $H_{i}$ & Number of households in statistical area ${i}$\\ 
+        $B_{i,single}$ & Number of single family buildings in statistical 
+            area $i$\\ 
+        $q_i$ & Calibration factor for statistical area $i$
+    \end{tabular} 
+}\pb
+
+We compute the average dwelling unit size of multi-family buildings for the
+specific statistical area. Then, for each multi-family building, we divide the
+entire building floor space by the average dwelling unit size mentioned above,
+round up the result, and we arrive at the estimated number of dwelling units in
+each building. Because we only allow integers for the number of dwelling units,
+the total number of dwelling units may differ from the total number of
+households. This may be seen as realistic, as there may be some vacant dwelling
+units in the statistical area. The other possibility, that there are not enough
+dwelling units for the households in the area, may also arise during the
+simulation. To solve this problem, we implement a factor in the computation of
+the average dwelling unit size specific for each statistical area. For now this
+factor only aims to reduce the number of vacant dwelling units. The possibility
+that there is more than one household in a dwelling unit is ruled out by
+definition, as the people living together in a dwelling unit count as one
+household.\\
+
+\begin{table}[htb] 
+    \centering 
+    \caption[Variables used for the allocation of households into dwelling 
+    units]{Variables used for the allocation of the synthetic households into 
+    the semi-synthetic dwelling units}
+    \label{tab:3} 
+    \begin{tabular}{l l} 
+        \addlinespace \toprule
+        \multicolumn{2}{l}{\textbf{Living standard of the household} }\\ 
+        \midrule
+        \textbf{Variable ID} & \textbf{Variable Name} \\ 
+        \textbf{ef451} & How many dwelling units has the building in which you 
+            are living?\\ 
+        \textbf{ef453} & What is the floor area of the dwelling unit?\\ 
+        \textbf{ef455} & In what year was your home built?\\ 
+        \bottomrule 
+    \end{tabular}\\ 
+    \begin{flushright}
+        \begin{footnotesize} 
+            Source: MIKROZENSUS~2002~\cite{StatistischesBundesamt.2002}. 
+            Variable names: translation by the authors.\\ 
+        \end{footnotesize} 
+    \end{flushright} 
+\end{table}
+
+After we compute the number of dwelling units in the statistical area, we
+populate them with the selected households (see Section~\ref{sec:5}). For this
+allocation we again use a hill climbing algorithm.  First we randomly populate
+the dwelling units (one household per dwelling unit), then we compute a
+specific total error for each dwelling unit. The sum of errors is the total
+absolute error (TAE2) for the statistical area. In an iterative process we
+start changing households from one dwelling unit to another (always in pairs,
+household A is allocated in dwelling unit B and household B in dwelling unit
+A). If the change results in a decrease of the total absolute error, the change
+is accepted, otherwise the change is rejected and the algorithm draws two new
+households at random. The variables used to compute the total absolute error
+are listed in Table~\ref{tab:3}.\\
+
+Because we have fit the synthetic households to characteristics of the building
+stock (see Table~\ref{tab:2} and Section~\ref{5}), the allocation of households
+into the building stock should work relatively smoothly. Because in this step
+we don't introduce any new families (as in the previous application of the
+algorithm), the number of possible combinations is limited, although still
+large enough to allow the implementation of a combinatorial optimization
+method. The algorithm performs $10e+10$ iterations. Its performance is depicted
+in Figure~\ref{fig:6}. Because the variables used to merge the households with
+the dwelling units refer to the building rather than to the dwelling unit
+within the buildings, changing households are always selected from different
+buildings and not only just from different dwelling units. The total absolute
+error ($TAE2$) is computed as in Equation~\ref{eq:5}; the corresponding weight
+for each variable is computed individually for each statistical area as in
+Equation~\ref{eq:6}.\\
+
+\parbox{\textwidth}{ 
+    \begin{equation} 
+    \label{eq:5} 
+        TAE2_i = \sum_{l} |U_i^{l} - U_i^{l}(obs)| * P^l_i 
+    \end{equation} 
+    \begin{equation}
+    \label{eq:6} 
+        P^k_i = \max_l{\bar{M}_i} \div \bar{M}^l_i 
+    \end{equation}
+    \noindent Where:\\ 
+    \begin{tabular}{lp{15cm}} 
+        $TAE2_i$ & Total Absolute Error (Application 2) of statistical
+            area $i$ \\ 
+        $U_i^{l}$ & Estimated variable $l$ for statistical area $i$ where 
+            $l = 1 \dots 3$ \\ 
+        $U_i^{k}(obs)$ & Observed variable $l$ for statistical area $i$ \\ 
+        $P_i^k$ & Weight factor of variable $l$ for statistical area $i$\\ 
+        $\bar{M}^l_i$ & Average variable $l$ for statistical area $i$ 
+    \end{tabular} 
+}\pb \pb
+
+The difference between the simulated households, allocated in the dwelling
+units, and the ``observed'' values retrieved from the ALKIS database, is
+depicted in Figure~\ref{fig:6}. Because the ``observed'' values have been
+partly estimated, we may describe them as semi-synthetic, as the ALKIS database
+does not have a construction year for all the buildings, the size of the
+dwelling units has been estimated (except for the single family houses), as has
+been the number of dwelling units per building.\\
+
+\begin{figure}[htb]
+    \centering 
+    \caption{Comparison between simulated and observed parameters} 
+    \label{fig:6} 
+    \input{FIGURES/RestrictiveParameters.tex}
+    \begin{flushleft}
+    \begin{footnotesize}
+    These parameters are used as restrictions to merge the households to the
+    dwelling units in statistical area 16004.  Result after $10e+6$ (Selection
+    of households from the micro census) $+ 10e+6$ (merge of households with
+    dwelling units) iterations
+    \end{footnotesize}
+    \end{flushleft}
+\end{figure}
+
+\section{Simulating heat consumption with synthetic microdata}
+\label{sec:8}
+
+For the simulation of heat consumption we need two sets of input parameters,
+the first corresponding to the building characteristics and the second
+corresponding to the individuals living in this building. (For a computation of
+heat demand, we would need only the first set of input data.) For the buildings
+and their energy-relevant properties, we use the Hamburg cadaster whose
+residential buildings we classify into types from the IWU typology (as
+described in Section~\ref{sec:6}). From the building typologies of the digital
+cadaster we compute the following parameters that are used as input to the heat
+accounting method: (1) Building dimensions, as absolute northing and easting
+displacement difference, thus implying an orientation of the building; (2)
+Building height, as number of stories times 3 meters, needed for the
+computation of the envelope area; (3) Roof slope, estimated based on the roof
+type, needed for the computation of the envelope area; (4) Percentage of glazed
+area, for the computation of transmission losses and solar gains, taken from
+the attributed building type; (5) U-value for the roof, for the computation of
+transmission losses, taken from the attributed building type; (6) U- value for
+the walls, for the computation of transmission losses, taken from the
+attributed building type; and (7) U-value for the windows, for the computation
+of transmission losses, taken from the attributed building type.\\
+
+\begin{table}[htb] 
+    \centering
+    \caption{Variables used to estimate the time at home for the single 
+    individuals} 
+    \label{tab:4} 
+    \begin{tabular}{l l}
+        \addlinespace \toprule
+        \multicolumn{2}{l}{\textbf{Labor participation}}\\ 
+        \textbf{Variable ID} & \textbf{Variable Name} \\
+        \textbf{ef95} & Employment status in the reference week\\ 
+        \textbf{ef138} & Full-time / part-time job\\ 
+        \textbf{ef141} & Typically hours worked during the week\\
+        \textbf{ef147} & Work on Saturday (February until April)\\ 
+        \textbf{ef148} & Work on Sundays and public holidays (February until 
+            April)\\
+        \textbf{ef149}& Evening work (between 6 p.m and 11 p.m) (February until
+            April)\\ 
+        \textbf{ef150} & Night work (between 11 p.m and 6 a.m) (February until 
+            April)\\ 
+        \textbf{ef151} & Night work hours (between 11 p.m and 6 a.m) (February
+            until April)\\ 
+        \textbf{ef163} & Home office (February until April)\\ \bottomrule 
+    \end{tabular}\\ 
+    \begin{flushright}
+        \begin{footnotesize} Source:
+            MIKROZENSUS~2002~\cite{StatistischesBundesamt.2002}. 
+            Variable names: translation by the authors.\\ 
+        \end{footnotesize} 
+    \end{flushright}
+\end{table}
+
+The input parameters derived from the households' attributes are: (1) Internal
+heat emissions $qi$; (2) Internal temperature $Ti$; and (3) Air exchange rate
+$n$. In order to find values for these parameters, we first estimate the
+average working hours of the individuals living in the building.  Here we make
+use of the micro census again. In order to estimate the average working hours
+of the single individuals we use the parameters describe in Table~\ref{tab:4}.
+With these parameters, we estimate the working hours of every single
+individual. Because we use the parameter of working hours as an indicator of
+presence in the dwelling unit, we take the minimum number of working hours out
+of the set of all household members, thus aiming to describe the presence hours
+of the one household member that is at home the most. So, for example, for a
+family with one parent working full-time and the other parent working
+part-time, the working hours of the household will correspond to the working
+hours of the parent working part-time. Another important variable is variable
+ef163, which describes if one of the individuals belonging to the household
+works at home. If so, the ``working hours'' of that individual are set to zero.
+This parameter can take two different values:
+
+\begin{enumerate}
+    \item always, which we translate to 0; and
+    \item sometimes, which we translate to 0.5, reducing the working hours to
+        half.
+\end{enumerate}\pb
+
+Table~\ref{tab:4} shows a list of parameters used to estimate the working hours
+and the hours at home of the household. In the next step an average is
+calculated for the building (that is, if the building is a multi-family
+house).\\
+
+\begin{table}[htb] 
+    \centering 
+    \caption{ Rules to select input variables to the heat balance model based
+    on the average working hours in the building}
+    \label{tab:5} 
+    \begin{tabular}{llll rrr l} 
+        \addlinespace \toprule
+        \multicolumn{4}{l}{\textbf{Computed work time $(wk)$}} &$q_i[W/m^2]$ &
+        $T_i[C^\circ]$ & $n[h^{-1}]$ & \textbf{possible occupant type}\\
+        \addlinespace
+$wt = $ &          &         &$> 10$ & 3& 18& 0.3 & single household, employed\\ 
+$wt = $ & $\leq 9$ & $\land$ &$> 8$  & 6& 19& 0.4 & both parents employed\\ 
+$wt = $ & $\leq 8$ & $\land$ &$> 4$  & 5& 20& 0.5 & ``average'' occupant \\ 
+$wt = $ & $\leq 4$ & $\land$ &$> 1$  & 6& 21& 0.6 & part time\\ 
+$wt = $ & $\leq 1$ &              &  & 7& 22& 0.7 & unemployed \\
+\bottomrule
+    \end{tabular}\\ 
+    \begin{footnotesize} 
+        $q_i[W/m^2] = $ Internal heat emissions; 
+        $T_i[C^\circ] = $ Internal temperature; 
+        and $n[h^{-1}] = $ Air exchange rate\\ 
+    \end{footnotesize} 
+\end{table}
+
+With the estimated working hours of the individual households and the average
+working hours of the building residents, we create a simple rule to define a
+set of input parameters for the heat accounting model. This rule distinguishes
+five different types of households (see Table~\ref{tab:5}), ranging from: a low
+temperature, low ventilation rate and low internal gains to the other extreme:
+with a high temperature demand, a high ventilation rate and high internal
+gains. The household type in the middle represents the ``average'' household,
+its parameter values follow those of the national norms. To these parameters we
+attach the average working hours (8), and subsequently, short working hours
+correspond to high ventilation, high temperature rates and high internal gains.
+In the other extreme, long working hours correspond to low temperature, low
+ventilation rates and low internal gains.\\
+
+\begin{figure}[htb] 
+    \centering 
+    \caption{Comparison between estimated heat demand and simulated heat
+    consumption}
+    \input{FIGURES/ComparisonBalanceAll.tex}
+    \label{fig:7}
+    \begin{flushleft}
+    \begin{footnotesize}
+        Comparison between heat demand estimated with a heat balance method,
+        using the ``average'' occupant (vertical axis) and with help of: (a)
+        building typologies; and (b) a heat balance, taking into account
+        occupant influence, induce thought the synthetic simulated demographic
+        characteristics via a spatial microsimulation (horizontal axis). This
+        comparison shows the results of buildings in statistical area 16004
+    \end{footnotesize}
+    \end{flushleft}
+\end{figure}
+
+We present the result for the selected statistical area (16004) by comparing:
+(1) the estimated heat demand with help of the ``standard'' heat balance model,
+this model assumes an ``average'' household and so makes uses of the standard
+internal gains, internal temperature and ventilation rates, corresponding to
+row 3 of Table~\ref{tab:5} and (2) the implementation of the heat balance
+method, varying input parameters ($qi$, $Ti$ and $n$) as a function of the
+computed average working hours of the building, thus simulating heat
+consumption. The result of this comparison in presented in Figure~\ref{fig:7}.
+One can clearly see in the plot that the simulated heat consumption shows a
+bigger spread. This is plausible, as it considers a richer spectrum of occupant
+types. The analyzed statistical area still has a high proportion of ``old''
+buildings, that is buildings predating the first (WSVO) Heat conservation
+ordinance in 1977 (see Figure~\ref{fig:8}). We can expect a much higher
+relative spread in urban areas that have been recently developed or
+re-developed (``relative'' meaning: relative in terms of the overall amount of
+heat consumption).\\
+
+On average the simulated heat consumption is much higher than the estimated
+heat demand. The selected urban area does not represent the average household
+in Hamburg.  Table~\ref{tab:6} compares some attributes with the average value
+for the entire city. The selected area has: (1) a high level of unemployment,
+which in our model means less or 0 working hours; (2) a lower share of single
+person households, which raises the probability of having a resident with zero
+working hours; and (3) a high share of households with children, leading also
+to low working hours of the household.\\
+
+\begin{figure}[htb] 
+    \centering 
+    \caption{Histogram showing the frequency of construction year in
+    statistical area 16004.}
+    \label{fig:8} 
+    \input{FIGURES/ConstructionYears.tex}
+    \begin{flushleft}
+    \begin{footnotesize}
+        To generate this distribution only known construction years are used
+    \end{footnotesize}
+    \end{flushleft}
+\end{figure}
+
+\begin{table}[htb]
+    \centering 
+    \caption{Description of some parameters of statistical area 16004 in
+    comparison of the average value for the city of Hamburg}
+    \label{tab:6}
+    \begin{tabular}{lrrr}
+        \addlinespace
+        \toprule
+        Statistical area 16004 & Hamburg & $\Delta$\\
+        Size of household [\# individuals per household]&   2.0 &   1.8 &  0.2\\ 
+        Share of foreign nationals [\%]                 &  45.1 &  13.6 & 31.5\\ 
+        Share of household with kids [\%]               &  26.7 &  16.9 &  9.8\\ 
+        Share of unemployed residents$^*$[\%]           &  12.2 &   4.8 &  7.4\\ 
+        Share of single person households [\%]          &  49.8 &  51.2 &  1.4\\ 
+        Number of private cars per 1000 residents [cars]& 180   & 353   &172  \\ 
+        \bottomrule \addlinespace 
+    \end{tabular} \\ 
+    \begin{footnotesize}
+    %    \begin{flushleft}
+        $^*$ Residents between the ages of 15 and 65.
+    %    \end{flushleft}
+    \end{footnotesize}
+\end{table}
+
+\section{NEXT STEP: INCLUDING A THERMAL SIMULATION MODEL}
+\label{sec:9}
+
+In a further step we aim to integrate a thermal simulation model. This will
+allow us to: (1) simulate at a much higher temporal resolution, needed for the
+efficient dimensioning of decentralized energy supply systems; and (2) feed the
+model with more detailed input data. The second reason is essential for
+achieving our goal. Most of the defined energy balance norms or models take a
+limited number of parameters as input; in particular there are few parameters
+that are related to occupant behaviour. This is because the aim of the standard
+method is the estimation of heat demand for the ``average'' occupant. Because
+we want to represent the full spectrum of occupants and their corresponding
+influence on the system we have to make use of a more flexible method for the
+estimation of residential heat demand.  Because of the nature of the heat
+accounting model, and the underlying national standard, we have to define a
+range of occupant-related parameters for each dwelling unit, rather than a time
+schedule reflecting occupants' presence. In our model we chose to estimate the
+average working hours as we plan to extend the model to incorporate a thermal
+simulation which is able to use a detailed occupants’ presence schedule as
+input. This means that from variable ef147 onward (see Table~\ref{tab:4}) we
+need to generate a detailed schedule for the simulation of heat consumption via
+a thermal simulation \citeA{Widen.2011, Wilke.2011}  Another problem with the
+use of a static heat balancing method is the inability of such a model to
+integrate individual characteristics of dwelling units. The major problem by
+attempting a dwelling-unit specific computation of heat consumption is the
+required input variables regarding the building envelope. In order to perform a
+dwelling unit based heat computation, we will have to define the geometry not
+only of the building but of the dwelling unit itself, orientation, size of
+facade, etc. This problem is no longer present for a proper thermal simulation
+model as the generated schedule can define various levels of occupancy.\\
+
+\section{Conclusions}
+\label{sec:10}
+
+The presented results mark our first attempt to simulate heat consumption at an
+urban scale, using microdata. Our model combines well established
+implementations from: (a) the microsimulation community and (b) the building
+simulation community. In this paper we have shown that a combination of both
+methods is possible and can generate interesting insights into the planning of
+cities and their technical infrastructures. We use a method from the
+microsimulation community (the Hill Climbing algorithm) to select families from
+the census database and allocate them into small statistical areas within the
+city. From the digital cadaster we attribute the corresponding buildings with
+energy relevant characteristics. In a third step we allocate the selected
+families into individual buildings. The buildings with it inhabitants serve as
+input data to a simplified heat balance model following the German DIN V 18599
+standard.\\
+
+We can show that the integration of socio-demographic characteristics of the
+families living in a specific area can be used as input for the simulation of
+heat consumption. This is an important contribution to both scientific
+communities as: (a) it shows an interesting application of microsimulation in
+the energy sector and (b) it presents an interesting approach for the building
+simulation community to integrate the occupants of the buildings into the
+simulation models not only within a sensitivity analysis but placing the
+occupant central to the simulation.  Current models for projecting heat demand
+employ an ``average'' occupant, both at a building scale and at an urban scale.
+The trend towards decentralized, as well as more efficient technical systems
+leads to greater sensitivity of technical systems. An integration of the
+occupant into infrastructure models will play an important role in the future
+of urban planning.\\
+
+With our simplified model we have shown that we are able to indicate a
+direction in the spread of estimated consumption that is plausible and
+commensurate with what we know about the analyzed area to which it was applied.
+As described in Section~\ref{sec:9}, we expect from future work -- integrating
+a thermal simulation model and constructing a more accurate micro data set --
+promising results for the energy planning sector. Although this paper focuses
+exclusively on heat energy, the range of questions that can be analyzed once a
+population is allocated to buildings is manifold.\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  The Bibliography           %%
+%%                                             %%              
+%%  IJM-article.cls will be used to            %% 
+%%  generate the bibliography                  %% 
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\refname}{REFERENCES}
+\bibliographystyle{apacite}
+%\bibliography{IJM-article}      % Bibliography file (usually '*.bib' ) 
+\bibliography{IJM-MunozPeters}      % Bibliography file (usually '*.bib' ) 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Figures                       %%
+%%                               %%
+%% NB: this is for captions and  %%
+%% Titles. All graphics must be  %%
+%% submitted separately and NOT  %%
+%% included in the Tex document  %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Tables                        %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Additional Files              %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\section*{Additional Files}
+%  \subsection*{Additional file 1 --- Sample additional file title}
+%    Additional file descriptions text (including details of how to
+%    view the file, if it is in a non-standard format or the file extension).  This might
+%    refer to a multi-page table or a figure.
+%
+%  \subsection*{Additional file 2 --- Sample additional file title}
+%    Additional file descriptions text.
+
+\end{document}
