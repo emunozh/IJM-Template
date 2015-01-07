@@ -45,7 +45,7 @@ Files
 +------------------+------------------------------------+
 | FIGURES_         | Folder with sample figures         |
 +------------------+------------------------------------+
-| IJM-article.pdf  | Sample article                     |
+| IJM-article.pdf_ | Sample article                     |
 +------------------+------------------------------------+
 
 Used packages
@@ -97,5 +97,6 @@ Used packages
 .. _readme.pdf: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.pdf 
 .. _FIGURES: https://github.com/emunozh/IJM-Template/blob/master/FIGURES
 .. _IJM-article.tex: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.tex
+.. _IJM-article.pdf: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.pdf
 .. _International Journal of Microsimulation: http://www.microsimulation.org/IJM/
 .. _pdflatex: http://www.tug.org/applications/pdftex/
