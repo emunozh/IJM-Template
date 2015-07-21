@@ -4,7 +4,7 @@
      \def\IJMversion{1.00}
 %    Author: Esteban Munoz (emunozh@gmail.com)
 %    Last Update:
-     \def\IJMdate{2014/12/12}
+     \def\IJMdate{2015/06/21}
 %
 %    See readme for a brief tutorial on how to use this class
 %                                           
@@ -31,6 +31,10 @@
 %%% Options
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Packages used for this class
+
+%% provides Garamond fonts
+%% based on information provideb by: Jürgen Wiemers. Thanks!
+\RequirePackage[urw-garamond]{mathdesign}
 
 %% For cross referencing
 \RequirePackage{hyperref}
@@ -60,7 +64,7 @@
 %% Bib APA
 \RequirePackage[notocbib, nosectionbib]{apacite}
 
-%% make all footnotes endones
+%% make all footnotes endnotes
 \RequirePackage{endnotes}
 \let\footnote=\endnote
 
@@ -219,7 +223,7 @@
     }
 
 %% Place
-\def\place#1{ \def\@place{\footnotesize#1\end{hi}}}
+\def\place#1{\def\@place{\footnotesize#1\end{hi}}}
 
 %% Author
 \def\ijm@authors{}
@@ -247,10 +251,10 @@
         \newpage
         \thispagestyle{titlepage}
         \vspace{3.4cm}
-            {\doublespacing \noindent \centering \normalsize \bfseries
+            {\doublespacing \noindent \centering \normalsize \normalfont \bfseries
             \@title \par}
         \vspace{2cm}
-            {\noindent \normalsize \ijm@authors \par}
+            {\noindent \normalsize \normalfont \ijm@authors \par}
         \vspace{3em}
     \end{minipage}
     \end{singlespace}
@@ -288,20 +292,20 @@
 %% Reformat Sections
 \renewcommand\section{\@startsection{section}{1}{\z@}
                      {2em}{2em}
-                     {\normalfont\normalsize\bfseries\sffamily\uppercase}}
+                     {\bfseries\uppercase}}
 %TODO: fit to original template
 \renewcommand\subsection{\@startsection{subsection}{2}{\z@}
                      {-0.84cm \@plus -1ex \@minus -.2ex} {.2ex \@plus.2ex}
-                     {\normalfont\normalsize\bfseries\sffamily}}
+                     {\bfseries\sffamily}}
 \renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}
                      {-0.84cm \@plus -1ex \@minus -.2ex} {.2ex \@plus.2ex}
-                     {\normalfont\normalsize\sffamily\itshape}}
+                     {\itshape}}
 \renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}
                      {-.2em \@plus1ex \@minus.2ex} {-0.5em}
-                     {\normalfont\normalsize\bfseries\sffamily}}
+                     {\bfseries\sffamily}}
 \renewcommand\subparagraph{\@startsection{subparagraph}{5}{\parindent}
                      {-.2em \@plus1ex \@minus.2ex} {-0.5em}
-                     {\normalfont\normalsize\sffamily}}
+                     {\sffamily}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Configuration

@@ -80,7 +80,12 @@ Used packages
 +-------------+----------------------------------------------------+
 | geometry_   | Manipulate the geometry of the layout              |
 +-------------+----------------------------------------------------+
+| mathdesign_ | Provides Garamond fonts. This package collides     |
+|             | with other math fonts (e.g. mathptmx_)             |
++-------------+----------------------------------------------------+
 
+.. _mathptmx: http://ctan.org/pkg/mathptmx
+.. _mathdesign: http://www.ctan.org/tex-archive/fonts/mathdesign/
 .. _hyperref: http://ctan.org/pkg/hyperref
 .. _graphicx: http://ctan.org/pkg/graphicx
 .. _lastpage: http://ctan.org/pkg/lastpage

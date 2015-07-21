@@ -1,3 +1,5 @@
 *.bak
+*.bbl
 IJM-MunozPeters.bib
 !/FIGURES
+tmp/
