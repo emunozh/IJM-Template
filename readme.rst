@@ -4,7 +4,7 @@ IJM articel style class for latex
 
 :Author: Esteban Munoz
 :Version: 1.0
-:Date: 12 December 2014
+:Date: 21 Jul 2015
 
 .. contents:: Table of Contents
    :depth: 2

@@ -125,7 +125,7 @@ endobj
 << /Outlines 40 0 R /PageLabels 47 0 R /PageMode /UseNone /Pages 44 0 R /Type /Catalog >>
 endobj
 39 0 obj
-<< /Author (Esteban Munoz) /CreationDate (D:20150721141432-10'00') /Creator (\(unspecified\)) /Keywords () /Producer (ReportLab PDF Library - www.reportlab.com) /Subject (\(unspecified\)) 
+<< /Author (Esteban Munoz) /CreationDate (D:20150721142516-10'00') /Creator (\(unspecified\)) /Keywords () /Producer (ReportLab PDF Library - www.reportlab.com) /Subject (\(unspecified\)) 
   /Title (IJM articel style class for latex) >>
 endobj
 40 0 obj
@@ -144,7 +144,7 @@ endobj
 << /Count 2 /Kids [ 19 0 R 37 0 R ] /Type /Pages >>
 endobj
 45 0 obj
-<< /Length 5428 >>
+<< /Length 5423 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
 q
@@ -210,7 +210,7 @@ q
 1 0 0 1 91.03937 3 cm
 q
 0 0 0 rg
-BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (12 December 2014) Tj T* ET
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (21 Jul 2015) Tj T* ET
 Q
 Q
 q
@@ -839,15 +839,15 @@ xref
 0000412765 00000 n
 0000412883 00000 n
 0000412954 00000 n
-0000418439 00000 n
-0000424753 00000 n
-0000424806 00000 n
-0000424843 00000 n
+0000418434 00000 n
+0000424748 00000 n
+0000424801 00000 n
+0000424838 00000 n
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com)
- [(_b\201\335\304\205\323\020\003\264\317\205 \003";) (_b\201\335\304\205\323\020\003\264\317\205 \003";)]
+ [(\341}\273\221\003q\303\342\201\361\3149\025\315U=) (\341}\273\221\003q\303\342\201\361\3149\025\315U=)]
  /Info 39 0 R /Root 38 0 R /Size 50 >>
 startxref
-424880
+424875
 %%EOF
