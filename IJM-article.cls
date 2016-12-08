@@ -1,5 +1,5 @@
-%                                           
-%    IJM_article.cls             
+%
+%    IJM_article.cls
 %    version:
      \def\IJMversion{1.00}
 %    Author: Esteban Munoz (emunozh@gmail.com)
@@ -7,25 +7,25 @@
      \def\IJMdate{2015/06/21}
 %
 %    See readme for a brief tutorial on how to use this class
-%                                           
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %    A Simple style class to format
 %    articles matching the IJM Template.
-%    This style class is based on the 
+%    This style class is based on the
 %    article class
 %    based on bmc_article.cls ver: 1.03
-%      http://www.biomedcentral.com/authors/tex 
+%      http://www.biomedcentral.com/authors/tex
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
+%
 
 \def\@journal{International Journal of Microsimulation}
 \def\@company{International Microsimulation Association}
 
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
 \ProvidesPackage{IJM-article}[\IJMdate, v\IJMversion, \@journal]
-\LoadClassWithOptions{article} 
+\LoadClassWithOptions{article}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Options
@@ -33,8 +33,11 @@
 %%% Packages used for this class
 
 %% provides Garamond fonts
-%% based on information provideb by: Jürgen Wiemers. Thanks!
-\RequirePackage[urw-garamond]{mathdesign}
+\RequirePackage{ebgaramond}
+%% command to bold garamond even though strictly speaking it's a substitute
+\newcommand{\fakebf}{\fontfamily{mdugm}\fontseries{b}\selectfont}
+\DeclareTextFontCommand{\textbf}{\fakebf}
+
 
 %% For cross referencing
 \RequirePackage{hyperref}
@@ -47,12 +50,9 @@
 
 %% Line separation
 \RequirePackage{setspace}
-\doublespacing
+\linespread{1.25}
 
-%% Paragraph separation
 \RequirePackage{parskip}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{-1em plus2mm minus2mm}
 
 %% Formating web addresses and email
 \RequirePackage{url}
@@ -71,9 +71,9 @@
 %% Captions
 \RequirePackage{ccaption} % allows special formating of the captions
 % defines the font of the caption name (e.g. Figure: or Table:)
-\captionnamefont{\footnotesize\bf}
+\captionnamefont{\scriptsize\fakebf}
 % defines the font of the caption text
-\captiontitlefont{\footnotesize\bf}
+\captiontitlefont{\scriptsize}
 %\setlength{\belowcaptionskip}{10pt}
 \captionstyle{\raggedright}
 
@@ -85,12 +85,15 @@
     a4paper,
     width=16cm,
     left=2.5cm,
-    height=24.7cm,
+    height=24.45cm,
+    % we want header to start 10mm away from top of the page
+    % however the measures here are not the same as how ms word define them
+    % by consequene I adjusted headsep manually until the ruler said they were the same
     top=2.5cm,
-    headheight=2cm,
-    headsep=.5cm,
+    headheight=5.12mm, %this is set by fancyhd
+    headsep=6.88mm, %distance from text
     marginparsep=0cm,
-    footskip=0.7cm,
+    footskip=15.12mm,
 ]{geometry}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -102,15 +105,15 @@
 %           /--------210------------------------/
 %                    paper width
 %        -  +-----------------------------------+  -        -
-%        |  |                                   |  |        | = 0
+%        |  |                                   |  |        |  10
 %        |  | - - - - - - - - - - - - - - - - - |  |        -
-%        |  | header                            |  | Top    |  20 headheight 
+%        |  | header                            |  | Top    |  5.12 headheight
 %        |  | - - - - - - - - - - - - - - - - - |  | 25     -
-%        |  |                                   |  |        |   5 headsep
+%        |  |                                   |  |        |  9.88 headsep
 %        |  | - - - - - - - - - - - - - - - - - |  -        -
 %    297 |  |         |                         |  |        |
-% paper- |  |         |body                     |  | height | 247 text hight
-% height |  | |-------+-----------------------| |  | 247    |
+% paper- |  |         |body                     |  | height | 244.5 text hight
+% height |  | |-------+-----------------------| |  | 244.5  |
 %        |  |         |                         |  |        |
 %        |  |         |                         |  |        |
 %        |  |         |                         |  |        |
@@ -126,16 +129,16 @@
 %        |  |         |                         |  |        |
 %        |  |         |                         |  |        |
 %        |  | - - - - - - - - - - - - - - - - - |  -        -
-%        |  |                                   |  |        |   7 footskip
+%        |  |                                   |  |        |   9.38 footskip
 %        |  | - - - - - - - - - - - - - - - - - |  |        -
-%        |  | footer                            |  | bottom |     footer hight
-%        |  | - - - - - - - - - - - - - - - - - |  | = 25   -
-%        |  |                                   |  |        |     
+%        |  | footer                            |  | bottom |   5.12  footer hight
+%        |  | - - - - - - - - - - - - - - - - - |  | = 27.5   -
+%        |  |                                   |  |        |    13
 %        -  +-----------------------------------+  -        -
 %
 %           /-/-------------------------------/-/
 %           25                160             = 210 - 160 - 25 = 25
-%           left (inner)    text width        right (outer)         
+%           left (inner)    text width        right (outer)
 %
 
 \pagestyle{fancy}
@@ -145,25 +148,25 @@
 \fancypagestyle{normalpage}{ %
 \fancyhf{}
 \restoregeometry
-\lhead{
-    \begin{footnotesize}
+\lhead{ %header-left
+    \begin{scriptsize}
         \textsc{\@journal \@ijm@issue}
-    \end{footnotesize}
+    \end{scriptsize}
 }
-\rhead{
-    \begin{footnotesize}
+\rhead{ %header-right
+    \begin{scriptsize}
         \thepage
-    \end{footnotesize}
+    \end{scriptsize}
 }
-\lfoot{
+\lfoot{ %foot-left
     %\fontsize{8.04pt}{1em}
-    \begin{footnotesize}
+    \begin{scriptsize}
     \parbox[t]{.2\textwidth}{
         \textsc{\@ijm@lastname}}
         \hspace{.3cm}
     \parbox[t]{.76\textwidth}{
         \textit{\@title}}
-    \end{footnotesize}
+    \end{scriptsize}
     }
 \renewcommand{\headrulewidth}{0pt} % remove lines as well
 \renewcommand{\footrulewidth}{0pt}
@@ -173,13 +176,15 @@
 %% Title Page
 \fancypagestyle{titlepage}{
 \fancyhf{}
-% The title page has different margins 
-\newgeometry{height=24.2cm, top=3cm}
+% The title page has different margins
+% again top at 10mm = 30 (tmargin)- 10.66mm (headheight) - 9.34mm (headsep)
+
+\newgeometry{height=24.2cm, tmargin=3cm,headheight=10.66mm,headsep=9.34mm}
 \lhead{
-    \begin{footnotesize}
-        \textsc{\@journal \@ijm@issue}\vspace{.2cm} \\ 
+    \begin{scriptsize}
+        \textsc{\@journal \@ijm@issue}\vspace{.2cm} \\
         \textsc{\@company}
-    \end{footnotesize}
+    \end{scriptsize}
 }
 \renewcommand{\headrulewidth}{0pt} % remove lines as well
 \renewcommand{\footrulewidth}{0pt}
@@ -190,7 +195,7 @@
 \setlength{\TPVertModule}{\TPHorizModule}
 \textblockorigin{0mm}{0mm} % top-left
 \AtBeginDocument{
-\begin{textblock}{6}(12,1.5)
+\begin{textblock}{6}(12,1)
     \includegraphics[scale=0.31]{logo}
 \end{textblock}
 \pagestyle{normalpage}
@@ -204,10 +209,10 @@
 \gdef\ijm@issue{}
 \newcommand\ijm@curissue{}
 \newcommand\issue[4]{\relax
-    \g@addto@macro\ijm@issue{(#1) #2(#3) #4-\pageref{LastPage}}
+    \g@addto@macro\ijm@issue{(#1) #2(#3) #4-\pageref*{LastPage}}
     \setcounter{page}{#4}
 }
-\def\@ijm@issue{\ijm@issue}  
+\def\@ijm@issue{\ijm@issue}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Front page
@@ -243,7 +248,7 @@
 
 %% Maketitle
 \let\old@maketitle\maketitle
-\renewcommand\maketitle{  
+\renewcommand\maketitle{
    \begin{singlespace}
     \global\let\@date\@empty
     \sffamily
@@ -251,7 +256,7 @@
         \newpage
         \thispagestyle{titlepage}
         \vspace{3.4cm}
-            {\doublespacing \noindent \centering \normalsize \normalfont \bfseries
+            {\doublespacing \noindent \centering \normalsize \normalfont \fakebf
             \@title \par}
         \vspace{2cm}
             {\noindent \normalsize \normalfont \ijm@authors \par}
@@ -260,17 +265,22 @@
     \end{singlespace}
 }
 
-%% Reformat the  abstract 
-%\let\old@abstract\abstract 
-\renewenvironment{abstract}{  
-      \ifhmode\begingroup\parskip0pt\par\noindent\endgroup\fi
-         {\noindent\bfseries ABSTRACT:}}{\\
-         \ifhmode\begingroup\parskip0pt\par\noindent\endgroup\fi
-         {\noindent\textbf{KEYWORDS:} \@ijm@key}
-         \vspace{0.3cm} \\
-         {\noindent\textbf{JEL classification:} \@ijm@jel}
+%% Reformat the  abstract
+%\let\old@abstract\abstract
+\renewenvironment{abstract}
+% before:
+{
+      \textbf{ABSTRACT:}
+}
+% after:
+{  \\ %end previous line
+\\ %blank line
+         \textbf{KEYWORDS:} \@ijm@key %keywords
+          \\ %end previous line
+          \\ %other blank line
+         \textbf{JEL classification:} \@ijm@jel %JEL
       \newpage
-   }
+}
 
 %% JEL Classification
 \newcommand\JELclassification[1]{\def\@ijm@jel{\relax#1}}
@@ -289,23 +299,32 @@
     \setlength{\itemsep}{\wideitemsep}
     \olditem}
 
-%% Reformat Sections
-\renewcommand\section{\@startsection{section}{1}{\z@}
-                     {2em}{2em}
-                     {\bfseries\uppercase}}
-%TODO: fit to original template
-\renewcommand\subsection{\@startsection{subsection}{2}{\z@}
-                     {-0.84cm \@plus -1ex \@minus -.2ex} {.2ex \@plus.2ex}
-                     {\bfseries\sffamily}}
-\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}
-                     {-0.84cm \@plus -1ex \@minus -.2ex} {.2ex \@plus.2ex}
-                     {\itshape}}
-\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}
-                     {-.2em \@plus1ex \@minus.2ex} {-0.5em}
-                     {\bfseries\sffamily}}
-\renewcommand\subparagraph{\@startsection{subparagraph}{5}{\parindent}
-                     {-.2em \@plus1ex \@minus.2ex} {-0.5em}
-                     {\sffamily}}
+
+% old way of doing it was through this command:
+% reference for the meaning of this stuff:
+% http://tex.stackexchange.com/a/31795/23288
+% \@startsection{<name>}{<level>}{<indent>}{<beforeskip>}{<afterskip>}{<style>}*[<altheading>]{<heading>}
+
+% I do it through titlesec
+\RequirePackage{titlesec}
+
+% comment properly for section
+\titleformat
+{\section} %command to over-write
+[hang] % shape
+{\normalfont\fontsize{12}{15}\fakebf}  %format
+{\thesection.} %label
+{0.5em} % separator
+{\MakeUppercase} %before-code
+[] %after code
+
+% fontsize{12}{15} means of size 12 with skip of 15.
+% notice that \normalfont\fontsize{12}{15} is actually useless since titlesec uses default
+
+% quicker for the other two
+\titleformat{\subsection} [hang] {\normalfont\fontsize{12}{15}\fakebf}  {\thesubsection.} {0.5em} {} []
+\titleformat{\subsubsection} [hang] {\normalfont\fontsize{12}{15}\itshape}  {\thesubsubsection.} {0.5em} {} []
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% General Configuration

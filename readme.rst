@@ -1,10 +1,10 @@
 =================================
-IJM articel style class for latex 
+IJM articel style class for latex
 =================================
 
 :Author: Esteban Munoz
-:Version: 1.0
-:Date: 21 Jul 2015
+:Version: 1.1
+:Date: 08 Dec 2016
 
 .. contents:: Table of Contents
    :depth: 2
@@ -23,7 +23,7 @@ be compiled using a different method.
 
 This template requires some additional packages in order to compile, please
 refer to section `Used Packages`_ for further information and links to the
-individual packages. 
+individual packages.
 
 .. image:: ./FIGURES/IJM-article.png
    :scale: 30 %
@@ -83,6 +83,10 @@ Used packages
 | mathdesign_ | Provides Garamond fonts. This package collides     |
 |             | with other math fonts (e.g. mathptmx_)             |
 +-------------+----------------------------------------------------+
+| ebgaramond_ | LaTeX support for EBGaramond fonts                 |
++-------------+----------------------------------------------------+
+| titlesec_   | Select alternative section titles                  |
++-------------+----------------------------------------------------+
 
 .. _mathptmx: http://ctan.org/pkg/mathptmx
 .. _mathdesign: http://www.ctan.org/tex-archive/fonts/mathdesign/
@@ -98,8 +102,10 @@ Used packages
 .. _ccaption: http://ctan.org/pkg/ccaption
 .. _faccyhdr: http://ctan.org/pkg/fancyhdr
 .. _geometry: http://ctan.org/pkg/geometry
+.. _ebgaramond: http://www.ctan.org/pkg/ebgaramond
+.. _titlesec: http://ctan.org/pkg/titlesec
 .. _IJM-article.cls: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.cls
-.. _readme.pdf: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.pdf 
+.. _readme.pdf: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.pdf
 .. _FIGURES: https://github.com/emunozh/IJM-Template/blob/master/FIGURES
 .. _IJM-article.tex: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.tex
 .. _IJM-article.pdf: https://github.com/emunozh/IJM-Template/blob/master/IJM-article.pdf
