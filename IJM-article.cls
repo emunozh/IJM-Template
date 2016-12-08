@@ -24,7 +24,7 @@
 \def\@company{International Microsimulation Association}
 
 \NeedsTeXFormat{LaTeX2e}[1995/12/01]
-\ProvidesPackage{IJM-article}[\IJMdate, v\IJMversion, \@journal]
+\ProvidesPackage{IJM-article}[\IJMdate, \IJMversion, \@journal]
 \LoadClassWithOptions{article}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +66,7 @@
 
 %% make all footnotes endnotes
 \RequirePackage{endnotes}
-\let\footnote=\endnote
+\let\footnote=\endnote%
 
 %% Captions
 \RequirePackage{ccaption} % allows special formating of the captions
@@ -145,9 +145,9 @@
 \fancyhf{}
 
 %% Normal page
-\fancypagestyle{normalpage}{ %
+\fancypagestyle{normalpage}{%
 \fancyhf{}
-\restoregeometry
+\restoregeometry%
 \lhead{ %header-left
     \begin{scriptsize}
         \textsc{\@journal \@ijm@issue}
@@ -155,13 +155,13 @@
 }
 \rhead{ %header-right
     \begin{scriptsize}
-        \thepage
+        \thepage%
     \end{scriptsize}
 }
 \lfoot{ %foot-left
     %\fontsize{8.04pt}{1em}
     \begin{scriptsize}
-    \parbox[t]{.2\textwidth}{
+    \parbox[t]{.25\textwidth}{
         \textsc{\@ijm@lastname}}
         \hspace{.3cm}
     \parbox[t]{.76\textwidth}{
@@ -239,7 +239,7 @@
     % author name
     \g@addto@macro\ijm@authors{\textbf{#2} \vspace{.5cm} \\}
     % lastname
-    \ifx \ijm@lastname \@empty
+    \ifx \ijm@lastname \@empty%
         \gdef\ijm@lastname{}
         \g@addto@macro\ijm@lastname{#1}
     \else
@@ -247,16 +247,16 @@
     \fi}
 
 %% Maketitle
-\let\old@maketitle\maketitle
-\renewcommand\maketitle{
+\let\old@maketitle\maketitle%
+\renewcommand\maketitle{%
    \begin{singlespace}
-    \global\let\@date\@empty
+    \global\let\@date\@empty%
     \sffamily
     \begin{minipage}{\textwidth}
         \newpage
         \thispagestyle{titlepage}
         \vspace{3.4cm}
-            {\doublespacing \noindent \centering \normalsize \normalfont \fakebf
+            {\doublespacing \noindent \centering \normalsize \normalfont \fakebf%
             \@title \par}
         \vspace{2cm}
             {\noindent \normalsize \normalfont \ijm@authors \par}
@@ -269,16 +269,16 @@
 %\let\old@abstract\abstract
 \renewenvironment{abstract}
 % before:
-{
+{%
       \textbf{ABSTRACT:}
-}
+}%
 % after:
-{  \\ %end previous line
+{\\ %end previous line
 \\ %blank line
-         \textbf{KEYWORDS:} \@ijm@key %keywords
+         \textbf{KEYWORDS:} \@ijm@key%keywords
           \\ %end previous line
           \\ %other blank line
-         \textbf{JEL classification:} \@ijm@jel %JEL
+         \textbf{JEL classification:} \@ijm@jel%JEL
       \newpage
 }
 
@@ -295,7 +295,7 @@
 \newlength{\wideitemsep}
 \setlength{\wideitemsep}{1em}
 \let\olditem\item
-\renewcommand{\item}{
+\renewcommand{\item}{%
     \setlength{\itemsep}{\wideitemsep}
     \olditem}
 
@@ -309,7 +309,7 @@
 \RequirePackage{titlesec}
 
 % comment properly for section
-\titleformat
+\titleformat%
 {\section} %command to over-write
 [hang] % shape
 {\normalfont\fontsize{12}{15}\fakebf}  %format
@@ -334,7 +334,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Endnotes
-\AtEndDocument{
+\AtEndDocument{%
     \begin{minipage}{\textwidth}
     \begingroup
     \def\enoteheading{
@@ -342,10 +342,10 @@
         \rule{6cm}{.1pt}%
         \vspace{1em}
     }
-    \theendnotes
-    \endgroup
+    \theendnotes%
+    \endgroup%
     \end{minipage}
 }
 
-\endinput
+\endinput%
 %% end of IJM-article.cls
