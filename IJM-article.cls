@@ -57,6 +57,8 @@
 %% Formating web addresses and email
 \RequirePackage{url}
 
+\RequirePackage{varwidth}
+
 %% For absolute positioning of text and figures
 % I need this to place the logo on the first page
 \RequirePackage[absolute]{textpos}
@@ -161,16 +163,23 @@
 \lfoot{ %foot-left
     %\fontsize{8.04pt}{1em}
     \begin{scriptsize}
-    \parbox[t]{.25\textwidth}{
-        \textsc{\@ijm@lastname}}
-        \hspace{.3cm}
-    \parbox[t]{.76\textwidth}{
-        \textit{\@title}}
+    \begin{varwidth}[t]{.25\textwidth}
+    \begin{flushleft}
+        \textsc{\@ijm@lastname}
+    \end{flushleft}
+    \end{varwidth}
+    \quad
+    \begin{varwidth}[t]{.72\textwidth}
+    \begin{flushleft}
+        \textit{\@title}
+    \end{flushleft}
+    \end{varwidth}
+    \hfill
     \end{scriptsize}
     }
 \renewcommand{\headrulewidth}{0pt} % remove lines as well
 \renewcommand{\footrulewidth}{0pt}
-\renewcommand{\headwidth}{17cm}
+%\renewcommand{\headwidth}{17cm}
 }
 
 %% Title Page

@@ -1,5 +1,5 @@
 =================================
-IJM articel style class for latex
+IJM article style class for latex
 =================================
 
 :Author: Esteban Munoz
@@ -12,7 +12,7 @@ IJM articel style class for latex
 Description
 ===========
 
-This is the repository dedicated to the maintenance and further develop of the
+This is the repository dedicated to the maintenance and further development of the
 latex article template for the `International Journal of Microsimulation`_.
 
 This template has been developed to fit the current template of the journal.
@@ -70,6 +70,8 @@ Used packages
 +-------------+----------------------------------------------------+
 | textpos_    | Allows for absolute positioning of text and images |
 +-------------+----------------------------------------------------+
+| varwidth_   | Allows for relative position of text blocks        |
++-------------+----------------------------------------------------+
 | apacite_    | Format bibliography in APA style                   |
 +-------------+----------------------------------------------------+
 | endnotes_   | Convert footnotes to endnotes                      |
@@ -97,6 +99,7 @@ Used packages
 .. _parskip: http://ctan.org/pkg/parskip
 .. _url: http://ctan.org/pkg/url
 .. _textpos: http://ctan.org/pkg/textpos
+.. _varwidth: http://ctan.org/pkg/varwidth
 .. _apacite: http://ctan.org/pkg/apacite
 .. _endnotes: http://ctan.org/pkg/endnotes
 .. _ccaption: http://ctan.org/pkg/ccaption
