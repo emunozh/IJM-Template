@@ -45,8 +45,7 @@
 %% Graphics integration (need to place the logo)
 \RequirePackage[pdftex]{graphicx}
 
-%% Compute the last page number (need for the header)
-\RequirePackage{lastpage}
+
 
 %% Line separation
 \RequirePackage{setspace}
@@ -70,13 +69,15 @@
 \RequirePackage{endnotes}
 \let\footnote=\endnote%
 
+
+
+
 %% Captions
 \RequirePackage{ccaption} % allows special formating of the captions
 % defines the font of the caption name (e.g. Figure: or Table:)
 \captionnamefont{\scriptsize\fakebf}
 % defines the font of the caption text
 \captiontitlefont{\scriptsize}
-%\setlength{\belowcaptionskip}{10pt}
 \captionstyle{\raggedright}
 
 %% Headers
@@ -152,7 +153,7 @@
 \restoregeometry%
 \lhead{ %header-left
     \begin{scriptsize}
-        \textsc{\@journal \@ijm@issue}
+        \textsc{\@journal \  \@ijm@issue}
     \end{scriptsize}
 }
 \rhead{ %header-right
@@ -191,7 +192,7 @@
 \newgeometry{height=24.2cm, tmargin=3cm,headheight=10.66mm,headsep=9.34mm}
 \lhead{
     \begin{scriptsize}
-        \textsc{\@journal \@ijm@issue}\vspace{.2cm} \\
+        \textsc{\@journal \  \@ijm@issue}\vspace{.2cm} \\
         \textsc{\@company}
     \end{scriptsize}
 }
@@ -355,6 +356,9 @@
     \endgroup%
     \end{minipage}
 }
+
+%% Compute the last page number (need for the header)
+\RequirePackage{lastpage}
 
 \endinput%
 %% end of IJM-article.cls
