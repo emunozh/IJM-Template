@@ -39,13 +39,15 @@
 \DeclareTextFontCommand{\textbf}{\fakebf}
 
 
+
 %% For cross referencing
 \RequirePackage{hyperref}
 
 %% Graphics integration (need to place the logo)
 \RequirePackage[pdftex]{graphicx}
 
-
+\RequirePackage[pagecontinue=false,alphMult=0,AlphMulti=0,
+fnsymbolmult=false,romanMult=false,RomanMulti=false]{pageslts}
 
 %% Line separation
 \RequirePackage{setspace}
@@ -73,12 +75,14 @@
 
 
 %% Captions
-\RequirePackage{ccaption} % allows special formating of the captions
+\RequirePackage{caption} % allows special formating of the captions
 % defines the font of the caption name (e.g. Figure: or Table:)
-\captionnamefont{\scriptsize\fakebf}
-% defines the font of the caption text
-\captiontitlefont{\scriptsize}
-\captionstyle{\raggedright}
+
+\DeclareCaptionLabelFormat{bf-gara}{\fakebf #1 #2}
+
+\captionsetup[figure]{font=scriptsize,labelformat=bf-gara,justification=raggedright,singlelinecheck=false}
+\captionsetup[table]{font=scriptsize,labelformat=bf-gara,justification=raggedright,singlelinecheck=false}
+
 
 %% Headers
 \RequirePackage{fancyhdr}
@@ -164,7 +168,7 @@
 \lfoot{ %foot-left
     %\fontsize{8.04pt}{1em}
     \begin{scriptsize}
-    \begin{varwidth}[t]{.25\textwidth}
+    \begin{varwidth}[t]{.35\textwidth}
     \begin{flushleft}
         \textsc{\@ijm@lastname}
     \end{flushleft}
@@ -205,6 +209,7 @@
 \setlength{\TPVertModule}{\TPHorizModule}
 \textblockorigin{0mm}{0mm} % top-left
 \AtBeginDocument{
+\pagenumbering{arabic}
 \begin{textblock}{6}(12,1)
     \includegraphics[scale=0.31]{logo}
 \end{textblock}
@@ -219,7 +224,7 @@
 \gdef\ijm@issue{}
 \newcommand\ijm@curissue{}
 \newcommand\issue[4]{\relax
-    \g@addto@macro\ijm@issue{(#1) #2(#3) #4-\pageref*{LastPage}}
+    \g@addto@macro\ijm@issue{(#1) #2(#3) #4-\pageref*{VeryLastPage}}
     \setcounter{page}{#4}
 }
 \def\@ijm@issue{\ijm@issue}
@@ -345,20 +350,28 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Endnotes
 \AtEndDocument{%
-    \begin{minipage}{\textwidth}
-    \begingroup
-    \def\enoteheading{
-        \vspace{4em}
-        \rule{6cm}{.1pt}%
-        \vspace{1em}
-    }
+%we need to put this in an ifelse condition otherwise papers without endnotes will crash!
+\ifnum \theendnote=0
+{
+}
+\else 
+{
+   % \begin{minipage}{\textwidth}
+   \linespread{0.5}\selectfont   % sets (new) value for extra vertical space between lines
+%    \begingroup
+%    \def\enoteheading{
+%        \vspace{4em}
+%        \rule{6cm}{.1pt}%
+%        \vspace{1em}
+%    }
     \theendnotes%
-    \endgroup%
-    \end{minipage}
+%    \endgroup%
+    %\end{minipage}
+    }
+    \fi
 }
 
-%% Compute the last page number (need for the header)
-\RequirePackage{lastpage}
+
 
 \endinput%
 %% end of IJM-article.cls
